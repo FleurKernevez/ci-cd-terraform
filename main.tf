@@ -25,6 +25,26 @@ variable "mysql_pwd" {
   type        = string
 }
 
+variable "mysql_root_password" {
+  description = "Port used by Python server"
+  type        = string
+}
+
+variable "mysql_user" {
+  description = "Port used by Python server"
+  type        = string
+}
+
+variable "mysql_database" {
+  description = "Port used by Python server"
+  type        = string
+}
+
+variable "mysql_host" {
+  description = "Port used by Python server"
+  type        = string
+}
+
 resource "docker_network" "internal_network"{
     name = "internal-app-network"
 }
@@ -81,7 +101,7 @@ resource "docker_container" "node_server" {
 // my sql
 
 resource "docker_image" "mysql_image" {
-    name = "docker.io/fleurk/mysql"
+    name = "docker.io/fleurk/mysql:9.2"
 
 }
 resource "docker_container" "mysql_image" {
@@ -118,6 +138,13 @@ resource "docker_container" "python_server" {
         name = docker_network.internal_network.name
     }
 
+    env=[
+        "MYSQL_ROOT_PASSWORD=var.mysql_root_password",
+        "MYSQL_USER=var.mysql_user",
+        "MYSQL_DATABASE=var.mysql_database",
+        "MYSQL_HOST=var.mysql_host"
+    ]
+
     ports {
         external = 8000
         internal = 8000
@@ -128,7 +155,6 @@ resource "docker_container" "python_server" {
 
     # Depends on MongoDB
     depends_on = [docker_container.mysql_image]
-
 }
 
 // react
