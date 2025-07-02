@@ -1,0 +1,81 @@
+# .github/workflows/deploy-microservices.yml
+name: Deploy Microservices to Scalingo
+
+on:
+  push:
+    branches:
+      - main # Déclencheur sur les push vers la branche main
+  workflow_dispatch:
+
+jobs:
+  # Job pour provisionner/mettre à jour l'infrastructure Scalingo avec Terraform
+  terraform_apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: |
+          cd scalingo-docker
+          terraform init
+          terraform apply -auto-approve -var="scalingo_api_token=${{ secrets.SCALINGO_API_TOKEN }}"
+        env:
+          SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }} # Assurez-vous que c'est un secret GitHub
+
+  # Job pour construire et déployer l'API Web
+  deploy_web:
+    runs-on: ubuntu-latest
+    # needs: terraform_apply # Dépend que l'infra Terraform soit à jour
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Checkout Front
+        uses: actions/checkout@v4
+        with:
+          repository: Loise/ci-cd-ynov
+          path: front
+      - name: Checkout Back node
+        uses: actions/checkout@v4
+        with:
+          repository: Loise/ci-cd-back-ynov
+          path: back-node
+          
+      - name: Créer l'archive
+        run: |
+          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
+          mkdir -p monoapp
+          cp -r front monoapp/
+          cp -r front/server/ monoapp/back-python
+          cp -r back-node monoapp/
+          cp scalingo-docker/Procfile monoapp/Procfile
+          tar -czvf monoapp.tar.gz --exclude='.git' -C monoapp .
+          ls -la
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: monoapp
+      
+      - name: Install Scalingo CLI
+        uses: scalingo-community/setup-scalingo@v0.1.1
+        with:
+          region: 'osc-fr1'  # Remplace par ta région Scalingo
+          api_token: ${{ secrets.SCALINGO_API_TOKEN }}  # Ton token API Scalingo (à stocker dans les secrets GitHub)
+
+      - name: Vérifier la version de Scalingo CLI
+        run: scalingo --version
+
+      - name: Déploiement sur Scalingo
+        run: scalingo --app loisefenoll-test-01 deploy monoapp.tar.gz
+        env:
+          SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }}
+
+      # - name: Login to Scalingo CLI
+      #   run: echo "${{ secrets.SCALINGO_API_TOKEN }}" | scalingo login --api-token-stdin
+
+      # - name: Deploy Web API to Scalingo
+      #   run: scalingo deploy --app my-microservices-app-tf --type web-api --docker-image your-dockerhub-user/web-api
