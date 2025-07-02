@@ -37,12 +37,12 @@ jobs:
       - name: Checkout Front
         uses: actions/checkout@v4
         with:
-          repository: Loise/ci-cd-ynov
+          repository: FleurKernevez/integration-deploiement
           path: front
       - name: Checkout Back node
         uses: actions/checkout@v4
         with:
-          repository: Loise/ci-cd-back-ynov
+          repository: anna97490/cicd-ynov-groupe
           path: back-node
           
       - name: Créer l'archive
@@ -52,7 +52,7 @@ jobs:
           cp -r front monoapp/
           cp -r front/server/ monoapp/back-python
           cp -r back-node monoapp/
-          cp scalingo-docker/Procfile monoapp/Procfile
+          cp scalingo-docker/procfile monoapp/Procfile
           tar -czvf monoapp.tar.gz --exclude='.git' -C monoapp .
           ls -la
 
@@ -70,7 +70,7 @@ jobs:
         run: scalingo --version
 
       - name: Déploiement sur Scalingo
-        run: scalingo --app loisefenoll-test-01 deploy monoapp.tar.gz
+        run: scalingo --app marinaperez-my-app deploy monoapp.tar.gz
         env:
           SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }}
 
