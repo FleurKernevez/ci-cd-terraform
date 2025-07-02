@@ -9,22 +9,22 @@ on:
 
 jobs:
   # Job pour provisionner/mettre à jour l'infrastructure Scalingo avec Terraform
-  terraform_apply:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  # terraform_apply:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v2
 
-      - name: Terraform Init
-        run: |
-          cd scalingo-docker
-          terraform init
-          terraform apply -auto-approve -var="scalingo_api_token=${{ secrets.SCALINGO_API_TOKEN }}"
-        env:
-          SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }} # Assurez-vous que c'est un secret GitHub
+  #     - name: Terraform Init
+  #       run: |
+  #         cd scalingo-docker
+  #         terraform init
+  #         terraform apply -auto-approve -var="scalingo_api_token=${{ secrets.SCALINGO_API_TOKEN }}"
+  #       env:
+  #         SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }} # Assurez-vous que c'est un secret GitHub
 
   # Job pour construire et déployer l'API Web
   deploy_web:
