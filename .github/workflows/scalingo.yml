@@ -68,7 +68,9 @@ jobs:
 
       - name: Vérifier la version de Scalingo CLI
         run: scalingo --version
-
+      - name: Vider le cache de Scalingo
+        run: scalingo --app marinaperez-my-app cache clear
+        # scalingo --app my-app deployment-delete-cache
       - name: Déploiement sur Scalingo
         run: scalingo --app marinaperez-my-app deploy monoapp.tar.gz
         env:
