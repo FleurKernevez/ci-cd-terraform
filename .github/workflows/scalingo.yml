@@ -52,7 +52,7 @@ jobs:
           cp -r front monoapp/
           cp -r front/server/ monoapp/back-python
           cp -r back-node monoapp/
-          cp scalingo-docker/procfile monoapp/Procfile
+          cp scalingo/scalingo-docker/procfile monoapp/Procfile
           tar -czvf monoapp.tar.gz --exclude='.git' -C monoapp .
           ls -la
 
