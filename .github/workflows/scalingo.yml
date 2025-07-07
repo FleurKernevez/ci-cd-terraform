@@ -73,13 +73,13 @@ jobs:
         run: |
           cd monoapp
           git init
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-          git remote add scalingogit@ssh.osc-fr1.scalingo.com:marinaperez-my-app.git
+          touch README.md
           git add .
           git commit -m "test"
-          git push scalingo master
-
+          git remote add scalingogit@ssh.osc-fr1.scalingo.com:marinaperez-my-app.git
+          git push scalingo HEAD:master --force
+        # git config user.name "GitHub Actions Bot"
+        # git config user.email "<>"
       # - name: Login to Scalingo CLI
       #   run: echo "${{ secrets.SCALINGO_API_TOKEN }}" | scalingo login --api-token-stdin
 
