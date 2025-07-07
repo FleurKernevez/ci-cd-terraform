@@ -69,7 +69,7 @@ jobs:
       - name: Vérifier la version de Scalingo CLI
         run: scalingo --version
       - name: Deploy with Scalingo Action
-        uses: derniercri/scalingo-deploy@0.0.24
+        uses: derniercri/scalingo-deploy@1.0.0
         with:
           token: ${{ secrets.SCALINGO_API_TOKEN }}
           appName: marinaperez-my-app
