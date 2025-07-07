@@ -73,7 +73,8 @@ jobs:
         run: |
           cd monoapp
           git init
-          git config --global init.defaultBranch main
+          git config --global pull.rebase false
+          git config --global init.defaultBranch master
           git config user.name "GitHub Actions Bot"
           git config user.email <actions@github.com>
           git add .
