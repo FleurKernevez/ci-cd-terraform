@@ -68,13 +68,17 @@ jobs:
 
       - name: Vérifier la version de Scalingo CLI
         run: scalingo --version
-      - name: Vider le cache de Scalingo
-        run: scalingo --app marinaperez-my-app deployment-delete-cache
-        # scalingo --app my-app deployment-delete-cache
-      - name: Déploiement sur Scalingo
-        run: scalingo --app marinaperez-my-app deploy monoapp.tar.gz
-        env:
-          SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }}
+      - name: Deploy with Scalingo Action
+        uses: derniercri/scalingo-deploy@0.0.24
+        with:
+          token: ${{ secrets.SCALINGO_API_TOKEN }}
+          appName: marinaperez-my-app
+          branch: main
+
+      # - name: Déploiement sur Scalingo
+      #   run: scalingo --app marinaperez-my-app deploy monoapp.tar.gz
+      #   env:
+      #     SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }}
 
       # - name: Login to Scalingo CLI
       #   run: echo "${{ secrets.SCALINGO_API_TOKEN }}" | scalingo login --api-token-stdin
